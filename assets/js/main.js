@@ -169,44 +169,23 @@
     chipWrap.innerHTML = labels.map(function (l) {
       return '<button type="button" class="chip" aria-pressed="' + (!!selected[l]) + '" data-chip="' + esc(l) + '">' + esc(l) + '</button>';
     }).join('');
+    function syncServices() {
+      var picks = Object.keys(selected).filter(function (k) { return selected[k]; });
+      var el = $('#quoteServices'); if (el) el.value = picks.join(', ');
+    }
     $$('.chip', chipWrap).forEach(function (c) {
       c.addEventListener('click', function () {
-        var l = c.getAttribute('data-chip'), on = !selected[l]; selected[l] = on; c.setAttribute('aria-pressed', on);
+        var l = c.getAttribute('data-chip'), on = !selected[l]; selected[l] = on; c.setAttribute('aria-pressed', on); syncServices();
       });
     });
-    // Leads are delivered to bosshogclearingco.com. The form POSTs to the
-    // handler on their own domain; if that endpoint isn't reachable we fall
-    // back to an email to the same domain so the request still gets there.
-    var ENDPOINT = form.getAttribute('action') || 'https://bosshogclearingco.com/quote-request';
-    var LEAD_EMAIL = 'quotes@bosshogclearingco.com';
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var fd = new FormData(form);
-      var picks = Object.keys(selected).filter(function (k) { return selected[k]; });
-      fd.append('services', picks.join(', '));
-      fd.append('source', 'homepage');
-      var subject = 'Quote request — ' + (fd.get('name') || 'New') + (fd.get('city') ? ' (' + fd.get('city') + ')' : '');
-      var body = [
-        'New quote request — Boss Hog Clearing Co.',
-        'Name: ' + (fd.get('name') || '—'),
-        'Phone: ' + (fd.get('phone') || '—'),
-        'Location: ' + (fd.get('city') || '—'),
-        'Needs: ' + (picks.join(', ') || '—'),
-        'Notes: ' + (fd.get('notes') || '—')
-      ].join('\n');
-      function done() { form.classList.add('hidden'); $('#quoteSuccess').classList.remove('hidden'); }
-      function emailFallback() {
-        try { window.location.href = 'mailto:' + LEAD_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body); } catch (x) {}
-        done();
-      }
-      if (window.fetch) {
-        fetch(ENDPOINT, { method: 'POST', body: fd })
-          .then(function (r) { if (r && r.ok) { done(); } else { emailFallback(); } })
-          .catch(emailFallback);
-      } else { emailFallback(); }
+    syncServices();
+    // Native POST to FormSubmit (action on the form). It emails the lead and
+    // redirects to _next (?sent=1). We just keep the hidden fields current.
+    form.addEventListener('submit', function () {
+      syncServices();
+      var nameEl = form.querySelector('[name=name]'), cityEl = form.querySelector('[name=city]'), subj = $('#quoteSubject');
+      if (subj) subj.value = 'Quote request — ' + ((nameEl && nameEl.value) || 'New') + (cityEl && cityEl.value ? ' (' + cityEl.value + ')' : '');
     });
-    var reset = $('#quoteReset');
-    if (reset) reset.addEventListener('click', function () { form.reset(); $('#quoteSuccess').classList.add('hidden'); form.classList.remove('hidden'); });
   })();
 
   /* ============================================================

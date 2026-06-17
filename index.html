@@ -169,11 +169,11 @@ if (location.hash && location.hash.toLowerCase() === '#quote') { location.replac
 
 <!-- audience split -->
 <div class="split">
-  <a href="#landowners">
+  <a href="/quote.html">
     <div class="lbl" style="color:var(--rust-dark)">Landowners &amp; Homeowners</div>
     <div class="big" style="color:var(--ink)">Clear my property →</div>
   </a>
-  <a href="#builders">
+  <a href="/quote.html">
     <div class="lbl" style="color:var(--amber)">Builders &amp; Developers</div>
     <div class="big" style="color:var(--wheat)">Your clearing sub →</div>
   </a>
@@ -425,7 +425,14 @@ if (location.hash && location.hash.toLowerCase() === '#quote') { location.replac
         <p style="font-size:14px;color:var(--muted)">Prefer the full builder? <a href="/quote.html" style="color:var(--amber);font-weight:600">Open the detailed quote request →</a></p>
       </div>
 
-      <form class="form-card" id="quoteForm" action="https://bosshogclearingco.com/quote-request" method="POST" data-reveal="right" novalidate>
+      <form class="form-card" id="quoteForm" action="https://formsubmit.co/bosshoglandclearing@gmail.com" method="POST" data-reveal="right" novalidate>
+        <input type="hidden" name="_subject" id="quoteSubject" value="New quote request — Boss Hog Clearing Co.">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://bosshogclearingco.com/quote.html?sent=1">
+        <input type="hidden" name="source" value="homepage">
+        <input type="hidden" name="services" id="quoteServices" value="Land clearing">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <h3>Or send the details</h3>
         <div class="form-row">
           <input class="field" type="text" name="name" placeholder="Your name" autocomplete="name" required>

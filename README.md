@@ -29,17 +29,29 @@ assets/
 - **Service-area radar**, animated count-up specs, accordion FAQ, marquee.
 - **Mobile-first UX** — collapsible nav (tap-outside / Escape to close), sticky call/text bar, `scroll-padding` for clean anchor jumps, and keyboard focus rings throughout.
 
-## Quote form → delivered to the business's domain
-Both forms (`#quoteForm` on the homepage, `#rfqForm` on the landing page)
-**POST the lead to `bosshogclearingco.com`** (`action="…/quote-request"`,
-multipart so attached photos go too). If that endpoint isn't reachable yet, the
-JS **falls back to an email** to `quotes@bosshogclearingco.com` so a request
-always gets through. Fast call/text paths remain for mobile / QR visitors.
+## Quote form → FormSubmit (with photo attachments)
+Both forms (`#quoteForm` on the homepage, `#rfqForm` on the landing page) POST to
+**FormSubmit** (`action="https://formsubmit.co/bosshoglandclearing@gmail.com"`),
+which emails each submission — **including the uploaded photos as attachments** —
+with no backend/server. It's free and supports up to **10 MB of attachments** per
+submission ([docs](https://formsubmit.co/documentation)). Before attaching, the
+landing-page JS **compresses each photo client-side** (resized to ~1600px JPEG),
+so several phone photos land well under the cap and upload fast.
 
-**To start capturing leads:** stand up a handler at `/quote-request` on the
-domain (a small serverless function, or point that path at Formspree / Basin /
-Web3Forms / Netlify Forms). No other code change needed — the endpoint is read
-from each form's `action` attribute.
+**To activate (one-time):** deploy, submit the form once on the live site, then
+click the **"Activate Form"** link FormSubmit emails to
+`bosshoglandclearing@gmail.com`. After that, every submission (with photos) is
+delivered. No accounts or API keys.
+
+How it works: the form does a native POST to FormSubmit, which emails the lead and
+redirects back to `…/quote.html?sent=1`, where the JS shows the success screen.
+Hidden fields: `_subject` (auto-set from the submitter's name/city), `_template=table`
+(tidy email), `_captcha=false`, `_next` (the redirect), `_honey` (spam honeypot),
+and `services` (kept in sync with the chip selection).
+
+To change where leads go, edit the email in each form's `action`. For extra spam
+protection you can swap it for the random alias FormSubmit gives you after the
+first submission.
 
 Business contact baked in: **469-631-5186** · **bosshoglandclearing@gmail.com**
 
